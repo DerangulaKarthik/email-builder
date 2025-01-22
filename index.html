@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Email Builder</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .welcome-container {
+            text-align: center;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-container h1 {
+            font-size: 28px;
+            color: #333333;
+            margin-bottom: 20px;
+        }
+
+        .welcome-container p {
+            font-size: 18px;
+            color: #666666;
+            margin-bottom: 30px;
+        }
+
+        .start-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .start-button:hover {
+            background-color: #218838;
+        }
+
+        .email-container {
+            display: none;
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #333333;
+        }
+
+        .content {
+            padding: 20px;
+            text-align: center;
+            min-height: 200px;
+            border: 1px dashed #ccc;
+            position: relative;
+        }
+
+        .editable-text {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border: none;
+            outline: none;
+            background: transparent;
+        }
+
+        .quote {
+            font-size: 18px;
+            color: #666666;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .upload-container, .save-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .upload-container input, .save-container button, .editable-text {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+
+        .upload-container input {
+            border: 1px solid #ccc;
+        }
+
+        .save-container button {
+            background-color: #28a745;
+            border: none;
+            color: white;
+        }
+
+        .save-container button:hover {
+            background-color: #218838;
+        }
+
+        .image-preview {
+            margin-top: 20px;
+            max-width: 100%;
+            height: auto;
+            display: none;
+        }
+
+        .footer {
+            padding: 15px;
+            font-size: 12px;
+            text-align: center;
+            background-color: #f4f4f4;
+            color: #888888;
+        }
+
+        .edit-sidebar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 250px;
+            background-color: #ffffff;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .edit-sidebar h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .edit-sidebar label {
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: block;
+            color: #666;
+        }
+
+        .edit-sidebar input, .edit-sidebar select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .edit-sidebar input[type="color"] {
+            width: auto;
+        }
+
+        .dragging {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Page -->
+    <div class="welcome-container">
+        <h1>Welcome to Our Email Builder</h1>
+        <p>Let's start creating beautiful emails easily with our drag-and-drop builder!</p>
+        <button class="start-button" onclick="startBuilding()">Start Building</button>
+    </div>
+
+    <!-- Email Builder -->
+    <div class="email-container">
+        <div class="header">
+            <h1 class="header-title" contenteditable="true" id="dragText" draggable="true">Welcome to Our Email Builder</h1>
+        </div>
+        <div class="content" id="contentArea" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="editable-text" contenteditable="true" draggable="true" id="draggableText">Type your text here...</div>
+            <p class="quote" contenteditable="true" draggable="true" id="draggableQuote">"Make your own template."</p>
+
+            <!-- Image Upload Section -->
+            <div class="upload-container">
+                <input type="file" id="imageUpload" accept="image/*" onchange="handleImageUpload(event)">
+            </div>
+
+            <!-- Image Preview Section -->
+            <img id="imagePreview" class="image-preview" src="" alt="Uploaded Image">
+
+            <!-- Save Button Section -->
+            <div class="save-container">
+                <button id="saveButton">Save</button>
+            </div>
+        </div>
+        <div class="footer">
+            &copy; 2025 Email Builder. All rights reserved.
+        </div>
+    </div>
+
+    <!-- Edit Sidebar -->
+    <div class="edit-sidebar" id="editSidebar">
+        <h3>Edit Text</h3>
+        <label for="fontSize">Font Size</label>
+        <select id="fontSize" onchange="updateTextStyles()">
+            <option value="16px">16px</option>
+            <option value="18px">18px</option>
+            <option value="20px">20px</option>
+            <option value="22px">22px</option>
+            <option value="24px">24px</option>
+        </select>
+
+        <label for="fontColor">Font Color</label>
+        <input type="color" id="fontColor" value="#333333" onchange="updateTextStyles()">
+
+        <label for="backgroundColor">Background Color</label>
+        <input type="color" id="backgroundColor" value="#f2f2f2" onchange="updateTextStyles()">
+
+        <label for="textStyle">Text Style</label>
+        <select id="textStyle" onchange="updateTextStyles()">
+            <option value="normal">Normal</option>
+            <option value="bold">Bold</option>
+            <option value="italic">Italic</option>
+            <option value="underline">Underline</option>
+        </select>
+    </div>
+
+    <script>
+        // JavaScript to handle the transition from welcome page to email builder
+        function startBuilding() {
+            document.querySelector('.welcome-container').style.display = 'none';  // Hide the welcome page
+            document.querySelector('.email-container').style.display = 'block';   // Show the email builder
+            document.querySelector('#editSidebar').style.display = 'block';       // Show the edit sidebar
+        }
+
+        // JavaScript to handle the drag-and-drop functionality
+        function allowDrop(event) {
+            event.preventDefault(); // Allow dropping
+        }
+
+        function drag(event) {
+            event.target.classList.add('dragging'); // Add dragging class
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            const draggedElement = document.querySelector('.dragging');
+            if (event.target === document.querySelector('.content')) {
+                event.target.appendChild(draggedElement); // Append dragged element to content area
+            }
+            draggedElement.classList.remove('dragging'); // Remove dragging class
+        }
+
+        // Handle Image Upload
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imagePreview = document.getElementById('imagePreview');
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    
+                    // Hide the image upload input after an image is uploaded
+                    document.getElementById('imageUpload').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Update Text Styles
+        function updateTextStyles() {
+            // Get the selected values
+            const fontSize = document.getElementById('fontSize').value;
+            const fontColor = document.getElementById('fontColor').value;
+            const backgroundColor = document.getElementById('backgroundColor').value;
+            const textStyle = document.getElementById('textStyle').value;
+
+            // Apply the styles to the editable text
+            const editableText = document.querySelector('.editable-text');
+            editableText.style.fontSize = fontSize;
+            editableText.style.color = fontColor;
+            editableText.style.backgroundColor = backgroundColor;
+
+            // Apply text style (bold, italic, underline)
+            if (textStyle === 'bold') {
+                editableText.style.fontWeight = 'bold';
+            } else {
+                editableText.style.fontWeight = 'normal';
+            }
+
+            if (textStyle === 'italic') {
+                editableText.style.fontStyle = 'italic';
+            } else {
+                editableText.style.fontStyle = 'normal';
+            }
+
+            if (textStyle === 'underline') {
+                editableText.style.textDecoration = 'underline';
+            } else {
+                editableText.style.textDecoration = 'none';
+            }
+        }
+
+        // Add draggable functionality to the text elements
+        document.getElementById("dragText").setAttribute("draggable", true);
+        document.getElementById("draggableText").setAttribute("draggable", true);
+        document.getElementById("draggableQuote").setAttribute("draggable", true);
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+    "name": "email-builder",
+    "version": "1.0.0",
+    "description": "Email Builder Application",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "express": "^4.21.2",
+        "multer": "^1.4.4"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
